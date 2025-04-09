@@ -1,0 +1,238 @@
+<!--
+
+CKPE Config
+Copyright (C) 2025  wxMichael
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:CKPEConfig.ViewModels"
+             mc:Ignorable="d"
+             d:DesignWidth="1024"
+             d:DesignHeight="800"
+             x:DataType="vm:MainWindowViewModel"
+             x:Class="CKPEConfig.Views.SettingsPage">
+
+	<Design.DataContext>
+		<vm:MainWindowViewModel />
+	</Design.DataContext>
+
+	<Grid RowDefinitions="Auto,Auto,*"
+	      ColumnDefinitions="*,*">
+		<Border Grid.Row="0"
+		        Grid.Column="0"
+		        Grid.ColumnSpan="2"
+		        Grid.RowSpan="{Binding SettingsContainerRowSpan}">
+
+			<StackPanel Orientation="Vertical">
+
+				<TextBlock FontSize="48"
+				           Padding="40, 0, 0, 0"
+				           FontFamily="Segoe UI"
+				           Text="{Binding CurrentSection}" />
+
+				<!-- Settings -->
+				<ScrollViewer HorizontalScrollBarVisibility="Visible"
+				              AllowAutoHide="False"
+				              VerticalScrollBarVisibility="Disabled"
+				              PointerWheelChanged="Settings_OnPointerWheelChanged"
+				              Padding="0, 0, 0, 10">
+					<ItemsControl x:Name="ItemList"
+					              Height="{Binding SettingsContainerHeight}"
+					              ItemsSource="{Binding Items}"
+					              Margin="0, 20, 0, 0">
+
+						<ItemsControl.ItemsPanel>
+							<ItemsPanelTemplate>
+								<WrapPanel Name="SettingsWrap"
+								           Orientation="Vertical"
+								           ItemSpacing="3"
+								           LineSpacing="10" />
+							</ItemsPanelTemplate>
+						</ItemsControl.ItemsPanel>
+					</ItemsControl>
+				</ScrollViewer>
+			</StackPanel>
+		</Border>
+		<Border Grid.Row="1"
+		        Grid.Column="0"
+		        IsVisible="{Binding InCreationKitSection}">
+
+			<Grid Name="ThemeGrid"
+			      RowDefinitions="Auto,Auto,Auto,Auto"
+			      ColumnDefinitions="Auto,Auto,Auto"
+			      RowSpacing="10"
+			      ColumnSpacing="10">
+				<Grid.Styles>
+					<Style Selector="#ThemeGrid > Border">
+						<Setter Property="BorderBrush"
+						        Value="#727281" />
+						<Setter Property="BorderThickness"
+						        Value="1" />
+						<Setter Property="BoxShadow"
+						        Value="0 0 20 0 #66000000" />
+						<Setter Property="Cursor"
+						        Value="Hand" />
+					</Style>
+					<Style Selector="#ThemeGrid > Border:pointerover">
+						<Setter Property="BorderBrush"
+						        Value="#00aeef" />
+					</Style>
+					<Style Selector="#ThemeGrid > Border.Selected">
+						<Setter Property="BorderBrush"
+						        Value="#00aeef" />
+						<Setter Property="BoxShadow"
+						        Value="0 0 20 0 #6600aeef" />
+						<Setter Property="Cursor"
+						        Value="Arrow" />
+					</Style>
+				</Grid.Styles>
+
+				<!-- Charsets -->
+				<StackPanel Grid.Row="0"
+				            Grid.Column="0"
+				            Grid.ColumnSpan="2"
+				            Margin="0,10,0,10"
+				            Orientation="Horizontal"
+				            Spacing="5"
+				            PointerEntered="Charset_OnPointerEntered"
+				            PointerExited="Charset_OnPointerExited">
+
+					<TextBlock FontFamily="Segoe UI"
+					           Text="Charset"
+					           VerticalAlignment="Center" />
+
+					<ComboBox ItemsSource="{Binding Charsets.Values, Mode=OneTime}"
+					          Name="nCharset"
+					          MinWidth="200"
+					          Classes="Small"
+					          VerticalAlignment="Bottom"
+					          BorderBrush="Black"
+					          BorderThickness="1"
+					          SelectedValue="{Binding SelectedCharsetValue, Mode=TwoWay}"
+					          SelectionChanged="Charset_OnSelectionChanged" />
+				</StackPanel>
+
+				<!-- Theme Grid -->
+				<TextBlock Grid.Row="1"
+				           Grid.Column="0"
+				           Grid.ColumnSpan="2"
+				           FontFamily="Segoe UI"
+				           FontSize="20"
+				           Text="Choose your color theme" />
+
+				<!-- Default -->
+				<!-- bUIClassicTheme=false -->
+				<!-- bUIDarkTheme=false -->
+				<!-- uUIDarkThemeId=0 -->
+				<Border Grid.Row="2"
+				        Grid.Column="0"
+				        Name="Default"
+				        PointerReleased="ThemeGrid_OnPointerReleased">
+					<Image Source="../Assets/theme-1.png" />
+				</Border>
+
+				<!-- Dark 1 -->
+				<!-- bUIClassicTheme=false -->
+				<!-- bUIDarkTheme=true -->
+				<!-- uUIDarkThemeId=0 -->
+				<Border Grid.Row="2"
+				        Grid.Column="1"
+				        Name="ThemeDark1"
+				        PointerReleased="ThemeGrid_OnPointerReleased">
+					<Image Source="../Assets/theme-2.png" />
+				</Border>
+
+				<!-- Classic -->
+				<!-- bUIClassicTheme=true -->
+				<!-- bUIDarkTheme=false -->
+				<!-- uUIDarkThemeId=0 -->
+				<Border Grid.Row="2"
+				        Grid.Column="2"
+				        Name="ThemeClassic"
+				        PointerReleased="ThemeGrid_OnPointerReleased">
+					<Image Source="../Assets/theme-3.png" />
+				</Border>
+
+				<!-- Dark 2 -->
+				<!-- bUIClassicTheme=false -->
+				<!-- bUIDarkTheme=true -->
+				<!-- uUIDarkThemeId=1 -->
+				<Border Grid.Row="3"
+				        Grid.Column="0"
+				        Name="ThemeDark2"
+				        PointerReleased="ThemeGrid_OnPointerReleased">
+					<Image Source="../Assets/theme-4.png" />
+				</Border>
+
+				<!-- Dark 3 -->
+				<!-- bUIClassicTheme=false -->
+				<!-- bUIDarkTheme=true -->
+				<!-- uUIDarkThemeId=2 -->
+				<Border Grid.Row="3"
+				        Grid.Column="1"
+				        Name="ThemeDark3"
+				        PointerReleased="ThemeGrid_OnPointerReleased">
+					<Image Source="../Assets/theme-5.png" />
+				</Border>
+
+				<!-- Custom -->
+				<!-- bUIClassicTheme=false -->
+				<!-- bUIDarkTheme=true -->
+				<!-- uUIDarkThemeId=3 -->
+				<Border Grid.Row="3"
+				        Grid.Column="2"
+				        Name="ThemeCustom"
+				        PointerReleased="ThemeGrid_OnPointerReleased">
+					<Image Source="../Assets/theme-custom.png" />
+				</Border>
+
+			</Grid>
+		</Border>
+
+		<!-- Tips -->
+		<TextBlock Grid.Row="2"
+		           Grid.Column="0"
+		           TextWrapping="Wrap"
+		           FontFamily="Segoe UI"
+		           Margin="0, 10">
+
+			<TextBlock.Styles>
+				<Style Selector="Run.Visible">
+					<Setter Property="Foreground"
+					        Value="LightSalmon" />
+				</Style>
+				<Style Selector="Run.Hidden">
+					<Setter Property="Foreground"
+					        Value="Transparent" />
+				</Style>
+			</TextBlock.Styles>
+
+			<Run Text="{Binding TipKey}"
+			     Foreground="#6ACAED"
+			     FontWeight="Bold" />
+			<Run Text="[Experimental]"
+			     Classes.Visible="{Binding TipExperimental}"
+			     Classes.Hidden="{Binding !TipExperimental}"
+			     FontWeight="Bold" />
+			<LineBreak />
+			<Run Text="{Binding Tip}" />
+		</TextBlock>
+	</Grid>
+</UserControl>

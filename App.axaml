@@ -1,0 +1,99 @@
+<!--
+
+CKPE Config
+Copyright (C) 2025  wxMichael
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+-->
+
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:semi="https://irihi.tech/semi"
+             x:Class="CKPEConfig.App"
+             RequestedThemeVariant="Dark">
+
+	<Application.Resources>
+		<StaticResource x:Key="CheckBoxPointeroverBackground"
+		                ResourceKey="SemiColorFill0" />
+		<StaticResource x:Key="CheckBoxPointeroverBorderBrush"
+		                ResourceKey="SemiColorPrimary" />
+		<StaticResource x:Key="CheckBoxPressedBackground"
+		                ResourceKey="SemiColorFill1" />
+		<StaticResource x:Key="CheckBoxPressedBorderBrush"
+		                ResourceKey="SemiColorPrimaryActive" />
+		<StaticResource x:Key="CheckBoxCheckedDefaultBackground"
+		                ResourceKey="SemiColorPrimary" />
+		<StaticResource x:Key="CheckBoxCheckedDefaultBorderBrush"
+		                ResourceKey="SemiColorPrimary" />
+		<StaticResource x:Key="CheckBoxCheckedPointeroverBackground"
+		                ResourceKey="SemiColorPrimaryPointerover" />
+		<StaticResource x:Key="CheckBoxCheckedPointeroverBorderBrush"
+		                ResourceKey="SemiColorPrimaryPointerover" />
+		<StaticResource x:Key="CheckBoxCheckedPressedBackground"
+		                ResourceKey="SemiColorPrimaryActive" />
+		<StaticResource x:Key="CheckBoxCheckedPressedBorderBrush"
+		                ResourceKey="SemiColorPrimaryActive" />
+		<StaticResource x:Key="CheckBoxDefaultDisabledBackground"
+		                ResourceKey="SemiColorDisabledFill" />
+		<StaticResource x:Key="CheckBoxDefaultDisabledBorderBrush"
+		                ResourceKey="SemiColorBorder" />
+		<StaticResource x:Key="CheckBoxCheckedDisabledBackground"
+		                ResourceKey="SemiColorPrimaryDisabled" />
+		<StaticResource x:Key="CheckBoxCheckedDisabledBorderBrush"
+		                ResourceKey="SemiColorPrimaryDisabled" />
+		<StaticResource x:Key="CheckBoxCardCheckedBackground"
+		                ResourceKey="SemiColorPrimaryLight" />
+		<StaticResource x:Key="CheckBoxCardCheckedBorderBrush"
+		                ResourceKey="SemiColorPrimary" />
+		<StaticResource x:Key="CheckBoxCardCheckedDisabledBorderBrush"
+		                ResourceKey="SemiColorPrimaryDisabled" />
+		<StaticResource x:Key="CheckBoxCardPointeroverBackground"
+		                ResourceKey="SemiColorFill0" />
+		<StaticResource x:Key="CheckBoxCardPressedBackground"
+		                ResourceKey="SemiColorFill1" />
+		<StaticResource x:Key="CheckBoxCardCheckedPointeroverBorderBrush"
+		                ResourceKey="SemiColorPrimaryPointerover" />
+		<StaticResource x:Key="CheckBoxCardCheckedPressedBorderBrush"
+		                ResourceKey="SemiColorPrimaryActive" />
+
+		<StaticResource x:Key="ButtonSolidPrimaryBackground"
+		                ResourceKey="SemiColorPrimary" />
+		<StaticResource x:Key="ButtonSolidPrimaryPointeroverBackground"
+		                ResourceKey="SemiColorPrimaryPointerover" />
+		<StaticResource x:Key="ButtonSolidPrimaryPressedForeground"
+		                ResourceKey="SemiColorWhite" />
+		<StaticResource x:Key="ButtonSolidPrimaryBorderBrush"
+		                ResourceKey="SemiColorPrimary" />
+		<StaticResource x:Key="ButtonSolidPrimaryPointeroverBorderBrush"
+		                ResourceKey="SemiColorPrimaryPointerover" />
+		<StaticResource x:Key="ButtonSolidPrimaryPressedBorderBrush"
+		                ResourceKey="SemiColorPrimaryActive" />
+	</Application.Resources>
+	<Application.Styles>
+		<semi:SemiTheme Locale="en-US" />
+		<Style Selector="TextBlock">
+			<Setter Property="Foreground"
+			        Value="{StaticResource SemiGrey2Color}" />
+		</Style>
+		<Style Selector="TextElement">
+			<Setter Property="Foreground"
+			        Value="{StaticResource SemiGrey2Color}" />
+		</Style>
+		<Style Selector="AccessText">
+			<Setter Property="Foreground"
+			        Value="{StaticResource SemiGrey2Color}" />
+		</Style>
+	</Application.Styles>
+</Application>

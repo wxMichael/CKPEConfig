@@ -1,0 +1,162 @@
+<!--
+
+CKPE Config
+Copyright (C) 2025  wxMichael
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+-->
+
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:v="using:CKPEConfig.Views"
+        xmlns:vm="using:CKPEConfig.ViewModels"
+        mc:Ignorable="d"
+        d:DesignWidth="1024"
+        d:DesignHeight="800"
+        x:Class="CKPEConfig.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/icon-ckpe.ico"
+        Title="CKPE Config"
+        Width="1024"
+        Height="800"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen">
+
+	<Design.DataContext>
+		<vm:MainWindowViewModel />
+	</Design.DataContext>
+
+	<Window.Styles>
+		<Style Selector="TextBlock">
+			<Setter Property="Foreground"
+			        Value="#B9BCC4" />
+		</Style>
+	</Window.Styles>
+
+	<Grid RowDefinitions="Auto,*,Auto"
+	      ColumnDefinitions="Auto,*">
+
+		<!-- CKPE Icon -->
+		<Image Grid.Row="0"
+		       Grid.Column="0"
+		       Source="../Assets/icon-ckpe.png"
+		       MaxWidth="193" />
+
+		<!-- Section List -->
+		<ListBox Grid.Row="1"
+		         Grid.Column="0"
+		         FontSize="36"
+		         FontFamily="Segoe UI Light"
+		         ItemsSource="{Binding Config.Data.Keys}"
+		         SelectionMode="AlwaysSelected"
+		         SelectionChanged="SectionList_OnSelectionChanged">
+			<ListBox.Styles>
+				<Style Selector="ListBoxItem">
+					<Setter Property="Padding"
+					        Value="0, 0" />
+
+					<Style Selector="^ TextBlock">
+						<Setter Property="Padding"
+						        Value="0, 10" />
+					</Style>
+				</Style>
+				<Style Selector="ListBoxItem:selected">
+					<Setter Property="Background"
+					        Value="#2d2d32" />
+				</Style>
+				<Style Selector="ListBoxItem:selected > Border">
+					<Setter Property="BorderBrush"
+					        Value="#00aeef" />
+				</Style>
+				<Style Selector="ListBoxItem:pointerover:not(:selected)">
+					<Setter Property="Background"
+					        Value="#1D1D21" />
+				</Style>
+			</ListBox.Styles>
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Border BorderThickness="5, 0, 0, 0"
+					        Margin="0"
+					        Padding="10, 0, 0, 0">
+						<TextBlock Text="{Binding}" />
+					</Border>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+
+		<!-- Copyright -->
+		<TextBlock Grid.Row="2"
+		           Grid.Column="0"
+		           Margin="0,5,0,0"
+		           FontFamily="Segoe UI Light">
+			CKPE Config Tool
+			<Run FontFamily="Segoe UI"
+			     Text="{Binding AppVersion, StringFormat=v{0}}" />
+			<LineBreak />
+			© 2025 wxMichael All Rights Reserved
+		</TextBlock>
+
+		<Grid Grid.Row="0"
+		      Grid.Column="1"
+		      Grid.RowSpan="3"
+		      RowDefinitions="Auto,*"
+		      ColumnDefinitions="*,*">
+
+			<!-- System Specs -->
+			<TextBlock Grid.Row="0"
+			           Grid.Column="0"
+			           Grid.ColumnSpan="2"
+			           FontFamily="Consolas"
+			           FontSize="18"
+			           HorizontalAlignment="Right"
+			           TextAlignment="Right"
+			           Margin="0, 0, 10, 0">
+
+				<Run Text="{Binding SystemInfo.OperatingSystem}" />
+				<LineBreak />
+				<Run Text="{Binding SystemInfo.Motherboard}" />,
+				<Run Text="{Binding SystemInfo.Cpu}" />,
+				<Run Text="{Binding SystemInfo.Gpu}" />
+				<LineBreak />
+				CK <Run Text="{Binding CkVersion}" />,
+				CKPE <Run Text="{Binding CkpeVersion}" />
+			</TextBlock>
+
+			<Border Grid.Row="1"
+			        Grid.Column="0"
+			        Grid.ColumnSpan="2"
+			        CornerRadius="80, 0, 0, 0"
+			        Padding="40,10, 0, 0"
+			        Background="#28282C">
+
+				<v:SettingsPage x:Name="SettingsPageControl"
+				                ZIndex="2" />
+			</Border>
+
+			<!-- CKPE AI Image -->
+			<Image Grid.Row="1"
+			       Grid.Column="1"
+			       Source="../Assets/ckpe-ai.png"
+			       VerticalAlignment="Bottom"
+			       HorizontalAlignment="Right"
+			       Opacity="0.05"
+			       ZIndex="1"
+			       IsHitTestVisible="False" />
+		</Grid>
+
+	</Grid>
+</Window>

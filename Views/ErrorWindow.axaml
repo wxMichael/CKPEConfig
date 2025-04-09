@@ -1,0 +1,56 @@
+<!--
+
+CKPE Config
+Copyright (C) 2025  wxMichael
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+-->
+
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:CKPEConfig.ViewModels"
+        mc:Ignorable="d"
+        d:DesignWidth="700"
+        d:DesignHeight="400"
+        x:Class="CKPEConfig.Views.ErrorWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/icon-ckpe.ico"
+        Title="CKPE Config - ERROR"
+        Width="700"
+        Height="400"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen">
+
+	<Design.DataContext>
+		<vm:MainWindowViewModel />
+	</Design.DataContext>
+
+	<DockPanel VerticalSpacing="5"
+	           Margin="5">
+		<Button DockPanel.Dock="Bottom"
+		        x:Name="CopyButton"
+		        Content="Copy to Clipboard"
+		        Theme="{DynamicResource SolidButton}"
+		        Classes="Primary Small"
+		        Click="CopyButton_OnClick" />
+		<ScrollViewer VerticalScrollBarVisibility="Visible">
+			<TextBlock FontSize="14"
+			           TextWrapping="Wrap"
+			           x:Name="ErrorMessage" />
+		</ScrollViewer>
+	</DockPanel>
+</Window>

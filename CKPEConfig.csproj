@@ -1,0 +1,78 @@
+﻿<!--
+
+CKPE Config
+Copyright (C) 2025  wxMichael
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+-->
+
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <LangVersion>preview</LangVersion>
+        <TargetFramework>net9.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <ApplicationIcon>Assets\icon-ckpe.ico</ApplicationIcon>
+        <IsPackable>false</IsPackable>
+        <CETCompat>false</CETCompat>
+        <FileVersion>1.0</FileVersion>
+
+        <SelfContained>true</SelfContained>
+        <IsTrimmable>true</IsTrimmable>
+        <PublishTrimmed>true</PublishTrimmed>
+        <PublishSingleFile>true</PublishSingleFile>
+        <TrimMode>copyused</TrimMode>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+        <EnableAotAnalyzer>true</EnableAotAnalyzer>
+        <EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
+        <TrimmerSingleWarn>true</TrimmerSingleWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="AOT Release">
+        <PublishAot>true</PublishAot>
+        <DebugSymbols>False</DebugSymbols>
+        <DebugType>None</DebugType>
+        <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\**"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="11.3.0-beta1"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.3.0-beta1"/>
+        <PackageReference Include="Avalonia.Diagnostics" Version="11.3.0-beta1">
+            <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+            <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
+        <PackageReference Include="Hardware.Info" Version="101.0.1"/>
+        <PackageReference Include="Semi.Avalonia" Version="11.2.1.6"/>
+        <PackageReference Include="Vortice.Direct3D11" Version="3.7.3-beta"/>
+        <PackageReference Include="Vortice.DXGI" Version="3.7.3-beta"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Views\SettingsPage.axaml.cs">
+            <DependentUpon>SettingsPage.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+    </ItemGroup>
+</Project>
