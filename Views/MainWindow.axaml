@@ -127,12 +127,22 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 			           Margin="0, 0, 10, 0">
 
 				<Run Text="{Binding SystemInfo.OperatingSystem}" />
+				<Run Text="•"
+				     Foreground="SteelBlue" />
+				<Run Text="{Binding SystemInfo.Motherboard}" />
+				<Run Text="•"
+				     Foreground="SteelBlue" />
+				<Run Text="{Binding SystemInfo.Ram}" />
 				<LineBreak />
-				<Run Text="{Binding SystemInfo.Motherboard}" />,
-				<Run Text="{Binding SystemInfo.Cpu}" />,
+				<Run Text="{Binding SystemInfo.Cpu}" />
+				<Run Text="•"
+				     Foreground="SteelBlue" />
 				<Run Text="{Binding SystemInfo.Gpu}" />
+				<Run Text="{Binding SystemInfo.Vram}" />
 				<LineBreak />
-				CK <Run Text="{Binding CkVersion}" />,
+				CK <Run Text="{Binding CkVersion}" />
+				<Run Text="•"
+				     Foreground="SteelBlue" />
 				CKPE <Run Text="{Binding CkpeVersion}" />
 			</TextBlock>
 

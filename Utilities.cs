@@ -46,4 +46,14 @@ public static class Utilities
 		key = default!;
 		return false;
 	}
+
+	public static string HumanizeBytes(this ulong bytes)
+	{
+		string[] suffix = ["B", "KB", "MB", "GB", "TB"];
+		double dblSByte = bytes;
+		int i;
+		for (i = 0; i < suffix.Length && bytes >= 1024; i++, bytes /= 1024) dblSByte = bytes / 1024.0;
+
+		return $"{dblSByte:0} {suffix[i]}";
+	}
 }

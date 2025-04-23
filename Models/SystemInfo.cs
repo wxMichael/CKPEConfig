@@ -31,11 +31,26 @@ namespace CKPEConfig.Models;
 
 public partial class SystemInfo
 {
+	public string? Cpu { get; }
+	public string Gpu { get; }
+	public string? Motherboard { get; }
+	public string OperatingSystem { get; }
+	public string Ram { get; }
+	public string Vram { get; }
+	private IDXGIAdapter1? PrimaryAdapter { get; }
+	private string? PrimaryDisplay { get; }
+
 	private readonly Dictionary<string, IDXGIAdapter1> _adapterList = new();
 	private readonly Dictionary<string, DisplayDevice> _displayList = new();
 
 	public SystemInfo()
 	{
+		MemoryStatusEx memoryStatus = new()
+		{
+			dwLength = (uint)Marshal.SizeOf<MemoryStatusEx>(),
+		};
+		Ram = GlobalMemoryStatusEx(ref memoryStatus) ? memoryStatus.ullTotalPhys.HumanizeBytes() : "-";
+
 		DisplayDevice device = new()
 		{
 			cb = Marshal.SizeOf<DisplayDevice>(),
@@ -60,12 +75,13 @@ public partial class SystemInfo
 				if ((adapter.Description1.Flags & AdapterFlags.Software) != 0) continue;
 				string desc = adapter.Description1.Description.Trim();
 				if (!_adapterList.TryAdd(desc, adapter)) continue;
-
-				if (desc == PrimaryDisplay)
-					PrimaryAdapter = adapter;
+				if (desc != PrimaryDisplay) continue;
+				PrimaryAdapter = adapter;
+				Vram = ((ulong)adapter.Description1.DedicatedVideoMemory).HumanizeBytes();
 			}
 
 		Gpu = PrimaryAdapter?.Description1.Description ?? "Unknown GPU";
+		Vram ??= "- GB";
 
 		using RegistryKey? cpuKey =
 			Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
@@ -97,26 +113,19 @@ public partial class SystemInfo
 		};
 	}
 
-	private string? PrimaryDisplay { get; }
-	private IDXGIAdapter1? PrimaryAdapter { get; }
-
-	public string? Motherboard { get; }
-	public string? Cpu { get; }
-
-	public string Gpu { get; }
-
-	public string OperatingSystem { get; }
-
 	[DllImport("user32.dll", CharSet = CharSet.Unicode)]
-	private static extern bool EnumDisplayDevices(string? lpDevice, uint iDevNum, ref DisplayDevice lpDisplayDevice,
-	                                              uint dwFlags);
+	private static extern bool EnumDisplayDevices(string? lpDevice, uint iDevNum, ref DisplayDevice lpDisplayDevice, uint dwFlags);
+
+	[return: MarshalAs(UnmanagedType.Bool)]
+	[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+	private static extern bool GlobalMemoryStatusEx([In] [Out] ref MemoryStatusEx lpBuffer);
 
 	[GeneratedRegex(@"(?:\d+(?:th|rd|nd) Gen|Processor|CPU|\d*[- ]Core|\(TM\)|\(R\))")]
 	private static partial Regex CpuRegex();
 }
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-public struct DisplayDevice
+internal struct DisplayDevice
 {
 	public int cb;
 
@@ -133,6 +142,20 @@ public struct DisplayDevice
 
 	[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
 	public string DeviceKey;
+}
+
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+internal struct MemoryStatusEx
+{
+	public uint dwLength;
+	public uint dwMemoryLoad;
+	public ulong ullTotalPhys;
+	public ulong ullAvailPhys;
+	public ulong ullTotalPageFile;
+	public ulong ullAvailPageFile;
+	public ulong ullTotalVirtual;
+	public ulong ullAvailVirtual;
+	public ulong ullAvailExtendedVirtual;
 }
 
 [Flags]

@@ -22,8 +22,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Avalonia;
@@ -43,6 +45,64 @@ namespace CKPEConfig.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
 	private const string IniFileName = "CreationKitPlatformExtended.ini";
+	private const string ThemeIniFileName = "CreationKitPlatformExtendedCustomTheme.ini";
+	private const string ThemeIniResource = $"CKPEConfig.Assets.{ThemeIniFileName}";
+
+	public string AppVersion { get; }
+
+
+	public Dictionary<int, string> Charsets { get; } = new()
+	{
+		{ 1, "(1) Default" },
+		{ 0, "(0) ANSI" },
+		{ 2, "(2) Symbol" },
+		{ 128, "(128) Shift JIS" },
+		{ 129, "(129) Hangul" },
+		{ 134, "(134) GB 2312" },
+		{ 136, "(136) Chinese Big5" },
+		{ 255, "(255) OEM" },
+		{ 130, "(130) Johab" },
+		{ 177, "(177) Hebrew" },
+		{ 178, "(178) Arabic" },
+		{ 161, "(161) Greek" },
+		{ 162, "(163) Turkish" },
+		{ 163, "(163) Vietnamese" },
+		{ 222, "(222) Thai" },
+		{ 238, "(238) East Europe" },
+		{ 204, "(204) Russian" },
+		{ 77, "(77) Mac" },
+		{ 186, "(186) Baltic" },
+	};
+
+	public string CkpeVersion { get; }
+	public string CkVersion { get; }
+	public IniFile Config { get; }
+
+	[NotifyPropertyChangedFor(nameof(InCreationKitSection),
+		nameof(SettingsContainerRowSpan),
+		nameof(SettingsContainerHeight))]
+	[ObservableProperty]
+	public partial string? CurrentSection { get; private set; }
+
+	public bool InCreationKitSection => CurrentSection == "CreationKit";
+
+	[ObservableProperty]
+	[NotifyCanExecuteChangedFor(nameof(SaveConfigCommand))]
+	public partial bool IsNotSaving { get; set; } = true;
+
+	[ObservableProperty] public partial ObservableCollection<object> Items { get; set; } = [];
+	[ObservableProperty] public partial string SelectedCharsetValue { get; set; }
+	public int SettingsContainerHeight => CurrentSection == "CreationKit" ? 120 : 500;
+	public int SettingsContainerRowSpan => CurrentSection == "CreationKit" ? 1 : 2;
+	public SystemInfo SystemInfo { get; }
+	public IniFile? ThemeConfig { get; private set; }
+
+	[ObservableProperty] public partial string? Tip { get; private set; }
+
+	[ObservableProperty] public partial bool TipExperimental { get; private set; }
+	[ObservableProperty] public partial string? TipKey { get; private set; }
+
+	private readonly string _gameInstallPath;
 
 	private readonly string[] _settingBlacklist = ["bUIClassicTheme", "bUIDarkTheme", "uUIDarkThemeId", "nCharset"];
 
@@ -67,6 +127,8 @@ public partial class MainWindowViewModel : ViewModelBase
 			}
 		},
 	};
+
+	internal Carousel? ThemeCarousel;
 
 	public MainWindowViewModel()
 	{
@@ -97,9 +159,10 @@ public partial class MainWindowViewModel : ViewModelBase
 			}
 		}
 
-		string parentPath = Path.GetDirectoryName(iniFilePath)!;
-		string ckPath = Path.Combine(parentPath, "CreationKit.exe");
-		string ckpePath = Path.Combine(parentPath, "winhttp.dll");
+		_gameInstallPath = Path.GetDirectoryName(iniFilePath)!;
+		string themeIniFilePath = Path.Combine(_gameInstallPath, ThemeIniFileName);
+		string ckPath = Path.Combine(_gameInstallPath, "CreationKit.exe");
+		string ckpePath = Path.Combine(_gameInstallPath, "winhttp.dll");
 
 		if (!File.Exists(ckPath)) CkVersion = "NOT INSTALLED";
 		else CkVersion = FileVersionInfo.GetVersionInfo(ckPath).FileVersion ?? "UNKNOWN VERSION";
@@ -119,6 +182,7 @@ public partial class MainWindowViewModel : ViewModelBase
 		}
 
 		Config = new IniFile(iniFilePath);
+		if (File.Exists(themeIniFilePath)) ThemeConfig = new IniFile(themeIniFilePath);
 
 		string? userValue = Config.Data["CreationKit"]["nCharset"].Value;
 		if (string.IsNullOrEmpty(userValue))
@@ -126,58 +190,6 @@ public partial class MainWindowViewModel : ViewModelBase
 		int charset = int.Parse(userValue);
 		SelectedCharsetValue = Charsets[charset];
 	}
-
-	public string AppVersion { get; }
-	public string CkVersion { get; }
-	public string CkpeVersion { get; }
-	public SystemInfo SystemInfo { get; }
-
-	[ObservableProperty] public partial string SelectedCharsetValue { get; set; }
-
-	public Dictionary<int, string> Charsets { get; } = new()
-	{
-		{ 1, "(1) Default" },
-		{ 0, "(0) ANSI" },
-		{ 2, "(2) Symbol" },
-		{ 128, "(128) Shift JIS" },
-		{ 129, "(129) Hangul" },
-		{ 134, "(134) GB 2312" },
-		{ 136, "(136) Chinese Big5" },
-		{ 255, "(255) OEM" },
-		{ 130, "(130) Johab" },
-		{ 177, "(177) Hebrew" },
-		{ 178, "(178) Arabic" },
-		{ 161, "(161) Greek" },
-		{ 162, "(163) Turkish" },
-		{ 163, "(163) Vietnamese" },
-		{ 222, "(222) Thai" },
-		{ 238, "(238) East Europe" },
-		{ 204, "(204) Russian" },
-		{ 77, "(77) Mac" },
-		{ 186, "(186) Baltic" },
-	};
-
-	public bool InCreationKitSection => CurrentSection == "CreationKit";
-
-	public int SettingsContainerRowSpan => CurrentSection == "CreationKit" ? 1 : 2;
-	public int SettingsContainerHeight => CurrentSection == "CreationKit" ? 120 : 500;
-
-	[NotifyPropertyChangedFor(nameof(InCreationKitSection),
-		nameof(SettingsContainerRowSpan),
-		nameof(SettingsContainerHeight))]
-	[ObservableProperty]
-	public partial string? CurrentSection { get; private set; }
-
-	[ObservableProperty] public partial bool TipExperimental { get; private set; }
-	[ObservableProperty] public partial string? TipKey { get; private set; }
-	[ObservableProperty] public partial string? Tip { get; private set; }
-	public IniFile Config { get; }
-
-	[ObservableProperty]
-	[NotifyCanExecuteChangedFor(nameof(SaveConfigCommand))]
-	public partial bool IsNotSaving { get; set; } = true;
-
-	[ObservableProperty] public partial ObservableCollection<object> Items { get; set; } = [];
 
 	[RelayCommand(CanExecute = nameof(IsNotSaving))]
 	private void SaveConfig()
@@ -332,7 +344,7 @@ public partial class MainWindowViewModel : ViewModelBase
 				control.Increment = 0.05m;
 				try
 				{
-					control.Value = decimal.Parse(lineData.Value.Value);
+					control.Value = decimal.Parse(lineData.Value.Value, new CultureInfo("en-US"));
 				}
 				catch (Exception e)
 				{
@@ -349,8 +361,8 @@ public partial class MainWindowViewModel : ViewModelBase
 			Match match = ValueRangeRegex().Match(lineData.Value.Comment);
 			if (match.Success)
 			{
-				decimal min = decimal.Parse(match.Groups["Minimum"].Value);
-				decimal max = decimal.Parse(match.Groups["Maximum"].Value);
+				decimal min = decimal.Parse(match.Groups["Minimum"].Value, new CultureInfo("en-US"));
+				decimal max = decimal.Parse(match.Groups["Maximum"].Value, new CultureInfo("en-US"));
 				control.Minimum = decimal.Min(min, max);
 				control.Maximum = decimal.Max(min, max);
 			}
@@ -617,6 +629,27 @@ public partial class MainWindowViewModel : ViewModelBase
 		Config.Data["CreationKit"]["bUIClassicTheme"].Value = isClassic ? "true" : "false";
 		Config.Data["CreationKit"]["bUIDarkTheme"].Value = isDark ? "true" : "false";
 		Config.Data["CreationKit"]["uUIDarkThemeId"].Value = darkId.ToString();
+
+		// Custom Theme
+		if (!isDark || darkId != 3) return;
+		if (ThemeConfig == null)
+		{
+			Assembly assembly = Assembly.GetExecutingAssembly();
+			using Stream? stream = assembly.GetManifestResourceStream(ThemeIniResource);
+			if (stream == null)
+				throw new Exception($"Resource '{ThemeIniResource}' not found.");
+
+			string themeIniFilePath = Path.Combine(_gameInstallPath, ThemeIniFileName);
+			using (FileStream fileStream = File.Create(themeIniFilePath))
+			{
+				stream.CopyTo(fileStream);
+				fileStream.Flush();
+			}
+
+			ThemeConfig = new IniFile(themeIniFilePath);
+		}
+
+		ThemeCarousel?.Next();
 	}
 
 	[GeneratedRegex(@"(?:(?<A>[A-Z0-9])(?<B>[A-Z][a-z])|(?<A>[a-z])(?<B>[A-Z0-9]))")]
